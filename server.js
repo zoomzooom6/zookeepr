@@ -1,7 +1,17 @@
 const express = require('express');
 const PORT = process.env.PORT || 3001;
+const fs = require('fs');
+const path = require('path');
+
 //instantiate server
 const app = express();
+
+//parse incoming string or array data
+app.use(express.urlencoded({ extended: true }));
+
+//parse incoming JSON data
+app.use(express.json());
+
 //route for front-end to request data from
 const { animals } = require('./data/animals.json');
 
@@ -52,7 +62,36 @@ function findById(id, animalsArray) {
     return result;
 }
 
-//add the route
+function createNewAnimal(body, animalsArray) {
+    const animal = body;
+    animalsArray.push(animal);
+    fs.writeFileSync(
+        path.join(__dirname, './data/animals.json'),
+        JSON.stringify({ animals: animalsArray }, null, 2)
+    );
+
+    //return finished code to post route for response
+    return animal;
+}
+
+//data validation function
+function validateAnimal(animal) {
+    if (!animal.name || typeof animal.name !== 'string') {
+        return false;
+    }
+    if (!animal.species || typeof animal.species !== 'string') {
+        return false;
+    }
+    if (!animal.diet || typeof animal.diet !== 'string') {
+        return false;
+    }
+    if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) {
+        return false;
+    }
+    return true;
+}
+
+//add the route, GET is action of client requesting server to provide data
 app.get('/api/animals', (req, res) => {
     //good for sending short messages
     //res.send('Hello!');
@@ -74,5 +113,23 @@ app.get('/api/animals/:id', (req, res) => {
         res.json(result);
     } else {
         res.send(404);
+    }
+});
+
+//route to add data to server, POST is action of client requesting server to accept data
+app.post('/api/animals', (req, res) => {
+    //set id based on next index of array
+    req.body.id = animals.length.toString();
+
+    //if any data in req.body is incorrect, send 400 error back
+    if (!validateAnimal(req.body)) {
+        res.status(400).send('The animal entry is not properly formatted.');
+    } else {
+        //add animal to json file and animals array in this function
+        const animal = createNewAnimal(req.body, animals);
+
+        //req.body is where our incoming content will be
+        console.log(req.body);
+        res.json(animal);
     }
 });
