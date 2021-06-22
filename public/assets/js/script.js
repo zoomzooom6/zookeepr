@@ -1,10 +1,10 @@
-const { response } = require("express");
+const { response } = require('express');
 
 const $animalForm = document.querySelector('#animal-form');
 
 const handleAnimalFormSubmit = event => {
   event.preventDefault();
-
+  console.log('parsing all inputted information');
   // get animal data and organize it
   const name = $animalForm.querySelector('[name="animal-name"]').value;
   const species = $animalForm.querySelector('[name="species"]').value;
@@ -27,6 +27,7 @@ const handleAnimalFormSubmit = event => {
     personalityTraits.push(selectedTraits[i].value);
   }
   const animalObject = { name, species, diet, personalityTraits };
+  console.log('reached just before fetch');
 
   fetch('/api/animals', {
     method: 'POST',
