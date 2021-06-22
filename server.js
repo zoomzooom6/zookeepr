@@ -12,13 +12,11 @@ app.use(express.urlencoded({ extended: true }));
 //parse incoming JSON data
 app.use(express.json());
 
+//instructs server to make files within specified folder (public) static resources
+app.use(express.static('public'));
+
 //route for front-end to request data from
 const { animals } = require('./data/animals.json');
-
-//makes server listen for incoming requests
-app.listen(PORT, () => {
-    console.log(`API server now on port ${PORT}!`);
-});
 
 //function to filter search results
 function filterByQuery(query, animalsArray) {
@@ -116,6 +114,10 @@ app.get('/api/animals/:id', (req, res) => {
     }
 });
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
 //route to add data to server, POST is action of client requesting server to accept data
 app.post('/api/animals', (req, res) => {
     //set id based on next index of array
@@ -132,4 +134,9 @@ app.post('/api/animals', (req, res) => {
         console.log(req.body);
         res.json(animal);
     }
+});
+
+//makes server listen for incoming requests, should be listed last
+app.listen(PORT, () => {
+    console.log(`API server now on port ${PORT}`);
 });
