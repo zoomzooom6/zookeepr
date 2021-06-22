@@ -1,12 +1,13 @@
 const express = require('express');
+const PORT = process.env.PORT || 3001;
 //instantiate server
 const app = express();
 //route for front-end to request data from
 const { animals } = require ('./data/animals.json');
 
 //makes server listen for incoming requests
-app.listen(3001, () => {
-    console.log('API server now on port 3001!');
+app.listen(PORT, () => {
+    console.log(`API server now on port ${PORT}!`);
 });
 
 //function to filter search results
