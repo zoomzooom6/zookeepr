@@ -13,14 +13,13 @@ const app = express();
 
 //parse incoming string or array data
 app.use(express.urlencoded({ extended: true }));
-
-//parse incoming JSON data
-app.use(express.json());
-app.use('/api', apiRoutes);
-app.use('/api', htmlRoutes);
-
 //instructs server to make files within specified folder (public) static resources
 app.use(express.static('public'));
+//parse incoming JSON data
+app.use(express.json());
+
+app.use('/api', apiRoutes);
+app.use('/', htmlRoutes);
 
 //makes server listen for incoming requests, should be listed last
 app.listen(PORT, () => {
