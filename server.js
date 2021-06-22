@@ -3,7 +3,7 @@ const PORT = process.env.PORT || 3001;
 //instantiate server
 const app = express();
 //route for front-end to request data from
-const { animals } = require ('./data/animals.json');
+const { animals } = require('./data/animals.json');
 
 //makes server listen for incoming requests
 app.listen(PORT, () => {
@@ -39,7 +39,7 @@ function filterByQuery(query, animalsArray) {
     }
     if (query.species) {
         filteredResults = filteredResults.filter(animal => animal.species === query.species);
-    } 
+    }
     if (query.name) {
         filteredResults = filteredResults.filter(animal => animal.name === query.name);
     }
@@ -47,11 +47,16 @@ function filterByQuery(query, animalsArray) {
     return filteredResults;
 }
 
+function findById(id, animalsArray) {
+    const result = animalsArray.filter(animal => animal.id === id)[0];
+    return result;
+}
+
 //add the route
 app.get('/api/animals', (req, res) => {
     //good for sending short messages
     //res.send('Hello!');
-    
+
     //resolves names of all entries in json file specified
     //res.json(animals);
 
@@ -60,4 +65,14 @@ app.get('/api/animals', (req, res) => {
         results = filterByQuery(req.query, results);
     }
     res.json(results);
+});
+
+//route for req.params, must come after other GET route
+app.get('/api/animals/:id', (req, res) => {
+    const result = findById(req.params.id, animals);
+    if (result) {
+        res.json(result);
+    } else {
+        res.send(404);
+    }
 });
