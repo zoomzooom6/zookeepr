@@ -3,6 +3,9 @@ const PORT = process.env.PORT || 3001;
 const fs = require('fs');
 const path = require('path');
 
+//route for front-end to request data from
+const { animals } = require('./data/animals.json');
+
 //instantiate server
 const app = express();
 
@@ -14,9 +17,6 @@ app.use(express.json());
 
 //instructs server to make files within specified folder (public) static resources
 app.use(express.static('public'));
-
-//route for front-end to request data from
-const { animals } = require('./data/animals.json');
 
 //function to filter search results
 function filterByQuery(query, animalsArray) {
@@ -147,7 +147,6 @@ app.post('/api/animals', (req, res) => {
         const animal = createNewAnimal(req.body, animals);
 
         //req.body is where our incoming content will be
-        console.log(req.body);
         res.json(animal);
     }
 });
